@@ -128,6 +128,9 @@ const Home = () => {
           songs={searchResults.length > 0 ? searchResults : songs}
           onSongClick={handleSongClick}
           onAddToPlaylist={handleAddToPlaylist}
+         /* onPlayPause={handlePlayPause}*/
+          onNext={handleNext}
+          onPrevious={handlePrevious}
         />
         <MusicPlayer
           currentSong={currentSong}
