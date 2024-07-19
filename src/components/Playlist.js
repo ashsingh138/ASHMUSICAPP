@@ -1,3 +1,4 @@
+// Playlist.js
 import React from 'react';
 
 const Playlist = ({
@@ -8,7 +9,11 @@ const Playlist = ({
   onCreatePlaylist,
   onEditPlaylist,
   onDeletePlaylist,
-  onSelectPlaylist
+  onSelectPlaylist,
+  currentSong,
+  isPlaying,
+  onPlayPause,
+  onSongClick
 }) => {
   const [newPlaylistName, setNewPlaylistName] = React.useState('');
 
@@ -54,8 +59,11 @@ const Playlist = ({
               .find((p) => p.name === currentPlaylist)
               ?.songs.map((song) => (
                 <li key={song.id}>
-                  <span>{song.title}</span>
+                  <span>{song.title} - {song.artist}</span>
                   <button onClick={() => onRemoveFromPlaylist(song)}>Remove</button>
+                  <button onClick={() => onSongClick(song)}>
+                    {currentSong && currentSong.id === song.id && isPlaying ? 'Pause' : 'Play'}
+                  </button>
                 </li>
               ))}
           </ul>

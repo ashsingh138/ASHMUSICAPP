@@ -23,13 +23,13 @@ const Home = () => {
 
   const fetchSongs = async () => {
     try {
-      const response = await axios.get('https://thingproxy.freeboard.io/fetch/https://api.deezer.com/chart');
-      const fetchedSongs = response.data.tracks.data.map((song) => ({
-        id: song.id,
-        title: song.title,
-        artist: song.artist.name,
-        preview: song.preview,
-        image: song.album.cover_medium,
+      const response = await axios.get('https://itunes.apple.com/us/rss/topsongs/limit=25/json');
+      const fetchedSongs = response.data.feed.entry.map((song, index) => ({
+        id: index,
+        title: song['im:name'].label,
+        artist: song['im:artist'].label,
+        preview: song.link[1].attributes.href,
+        image: song['im:image'][2].label,
       }));
       setSongs(fetchedSongs);
     } catch (error) {
@@ -39,13 +39,13 @@ const Home = () => {
 
   const handleSearch = async (query) => {
     try {
-      const response = await axios.get(`https://thingproxy.freeboard.io/fetch/https://api.deezer.com/search?q=${query}`);
-      const searchResults = response.data.data.map((song) => ({
-        id: song.id,
-        title: song.title,
-        artist: song.artist.name,
-        preview: song.preview,
-        image: song.album.cover_medium,
+      const response = await axios.get(`https://itunes.apple.com/search?term=${query}&entity=song`);
+      const searchResults = response.data.results.map((song, index) => ({
+        id: index,
+        title: song.trackName,
+        artist: song.artistName,
+        preview: song.previewUrl,
+        image: song.artworkUrl100,
       }));
       setSearchResults(searchResults);
     } catch (error) {
@@ -72,8 +72,12 @@ const Home = () => {
   };
 
   const handleSongClick = (song) => {
-    setCurrentSong(song);
-    setIsPlaying(true);
+    if (currentSong && currentSong.id === song.id) {
+      setIsPlaying(!isPlaying);
+    } else {
+      setCurrentSong(song);
+      setIsPlaying(true);
+    }
   };
 
   const handleAddToPlaylist = (song) => {
@@ -143,6 +147,10 @@ const Home = () => {
           onEditPlaylist={handleEditPlaylist}
           onDeletePlaylist={handleDeletePlaylist}
           onSelectPlaylist={setCurrentPlaylist}
+          currentSong={currentSong}
+          isPlaying={isPlaying}
+          onPlayPause={handlePlayPause}
+          onSongClick={handleSongClick}
         />
       )}
       <Footer />
